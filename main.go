@@ -43,8 +43,10 @@ func createExport(arr []TsvInfo, dir string) {
 	if err != nil {
 		panic(err)
 	}
-	for _, tsv := range arr {
-		copy(tsv, exportPath)
+	for _, item := range arr {
+		itemPath := filepath.Join(exportPath, item.SessionName)
+		os.Mkdir(itemPath, 0777)
+		copy(item.TsvPath, itemPath)
 	}
 
 }
@@ -90,6 +92,7 @@ func processFiles(dir string) {
 			if tsvPath != "" {
 				info := TsvInfo{file.Name(), tsvPath}
 				tsvInfos = append(tsvInfos, info)
+				createExport(tsvInfos, filePath)
 			}
 		}
 	}
@@ -100,6 +103,7 @@ func main() {
 	dirExists, _ := dirCheck(dirArgs)
 	if dirExists {
 		fmt.Println("it exists!")
+		processFiles(dirArgs)
 	} else {
 		fmt.Printf("could not find directory %s", dirArgs)
 	}
