@@ -31,20 +31,20 @@ func copy(src, dst string) error {
 		return err
 	}
 	defer destination.Close()
-	_, err2 := io.Copy(destination, source)
+	_, err2 := io.Copy(source, destination)
 	return err2
 }
 
-func createExport(arr []TsvInfo, dir string) {
+func createExport(arr []TsvInfo, dir string, rootdir string) {
 	now := time.Now()
-	exportName := fmt.Sprintf("%s_%s_tsv_%+02d%+02d%d", FIRSTNAME, LASTNAME, now.Month(), now.Day(), now.Year())
-	exportPath := filepath.Join(dir, exportName)
+	exportName := fmt.Sprintf("%s_%s_tsv_%d%d%d", FIRSTNAME, LASTNAME, now.Month(), now.Day(), now.Year())
+	exportPath := filepath.Join(rootdir, exportName)
 	err := os.Mkdir(exportPath, 0777)
 	if err != nil {
 		panic(err)
 	}
 	for _, item := range arr {
-		itemPath := filepath.Join(exportPath, item.SessionName)
+		itemPath := filepath.Join(exportPath, item.TsvPath)
 		os.Mkdir(itemPath, 0777)
 		copy(item.TsvPath, itemPath)
 	}
@@ -92,7 +92,7 @@ func processFiles(dir string) {
 			if tsvPath != "" {
 				info := TsvInfo{file.Name(), tsvPath}
 				tsvInfos = append(tsvInfos, info)
-				createExport(tsvInfos, filePath)
+				createExport(tsvInfos, filePath, dir)
 			}
 		}
 	}
