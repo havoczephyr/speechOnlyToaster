@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -16,19 +15,30 @@ type TsvInfo struct {
 }
 
 func copy(src, dst string) error {
+	// Read the File
 	source, err := os.Open(src)
 	if err != nil {
 		return err
 	}
 	defer source.Close()
 
+	bs, err := ioutil.ReadAll(source)
+	if err != nil {
+		return err
+	}
+
 	destination, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
 	defer destination.Close()
-	fmt.Printf("copying from %s to %s", src, dst)
-	_, err2 := io.Copy(source, destination)
+
+	// fmt.Printf("copying from %s to %s \n", src, dst)
+	// bytes, err2 := io.Copy(source, destination)
+	// fmt.Printf("returning %d bytes \n", bytes)
+	// return err2
+
+	_, err2 := destination.Write(bs)
 	return err2
 }
 

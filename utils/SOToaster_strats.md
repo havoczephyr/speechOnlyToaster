@@ -6,3 +6,9 @@ in the main function:
 5. loop through the names of every folder name captured in step 2 and copy the `curated_processed_speech_only.tsv` files renamed to the source folder inside.
 
 this application will be PATH-able and usable on target locations.
+
+
+look into current working directory
+
+
+June 26th 2022 - folder is generated, tsv's are generated but files are **not** fully copied over.
