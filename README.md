@@ -16,5 +16,5 @@ soToaster will use your arguments to generate a folder with your name and the cu
 
 **if there is already a folder generated for the day, SOtoaster will panic and close, you will need to delete the folder in order to create a new folder with SOtoaster.**
 
-soToaster *will ignore* any `session-`  folder that does not contain a `curated_speech_only.tsv` and it will ignore any `session` folders placed elsewhere inside of the folder. ergo, under 2 or more layers.
+soToaster *will ignore* any `session-`  folder that does not contain a `curated_speech_only.tsv` and it will ignore any `session-` folders placed elsewhere inside of the folder. ergo, under layers beyond the `working directory`.
 
