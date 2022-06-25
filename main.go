@@ -10,10 +10,6 @@ import (
 	"time"
 )
 
-// be careful with apostrophes, since this will be used in the filename.
-const FIRSTNAME string = "Giovanni"
-const LASTNAME string = "DAmico"
-
 type TsvInfo struct {
 	SessionName string
 	TsvPath     string
@@ -31,22 +27,28 @@ func copy(src, dst string) error {
 		return err
 	}
 	defer destination.Close()
+	fmt.Printf("copying from %s to %s", src, dst)
 	_, err2 := io.Copy(source, destination)
 	return err2
 }
 
-func createExport(arr []TsvInfo, dir string, rootdir string) {
+func createExport(tsvArr []TsvInfo, rootdir string, firstName string, lastName string) {
 	now := time.Now()
-	exportName := fmt.Sprintf("%s_%s_tsv_%d%d%d", FIRSTNAME, LASTNAME, now.Month(), now.Day(), now.Year())
+	exportName := fmt.Sprintf("%s_%s_tsv_%d%d%d", firstName, lastName, now.Month(), now.Day(), now.Year())
 	exportPath := filepath.Join(rootdir, exportName)
 	err := os.Mkdir(exportPath, 0777)
 	if err != nil {
+		fmt.Printf("could not make dir: %s", err)
 		panic(err)
 	}
-	for _, item := range arr {
-		itemPath := filepath.Join(exportPath, item.TsvPath)
-		os.Mkdir(itemPath, 0777)
-		copy(item.TsvPath, itemPath)
+	for _, item := range tsvArr {
+		sessionFileName := item.SessionName + ".tsv"
+		itemPath := filepath.Join(exportPath, sessionFileName)
+		err := copy(item.TsvPath, itemPath)
+		if err != nil {
+			fmt.Printf("failed to copy: %s tsv path: %s", err, item.TsvPath)
+			panic(err)
+		}
 	}
 
 }
@@ -77,12 +79,13 @@ func tsvCheck(dir string) (string, error) {
 	return "", nil
 }
 
-func processFiles(dir string) {
+func processFiles(dir string) []TsvInfo {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
+		fmt.Printf("read failure: %s", err)
 		panic(err)
 	}
-	tsvInfos := make([]TsvInfo, len(files))
+	tsvInfos := make([]TsvInfo, 0)
 
 	for _, file := range files {
 		isSession := file.IsDir() && strings.HasPrefix(file.Name(), "session-")
@@ -90,21 +93,29 @@ func processFiles(dir string) {
 			filePath := filepath.Join(dir, file.Name())
 			tsvPath, _ := tsvCheck(filePath)
 			if tsvPath != "" {
+				fmt.Printf("adding tsv session name %s and tsvPath %s \n", file.Name(), tsvPath)
 				info := TsvInfo{file.Name(), tsvPath}
 				tsvInfos = append(tsvInfos, info)
-				createExport(tsvInfos, filePath, dir)
+
 			}
 		}
 	}
+	fmt.Printf("length of tsvInfos: %d \n", len(tsvInfos))
+	return tsvInfos
 }
 
 func main() {
-	dirArgs := os.Args[1]
-	dirExists, _ := dirCheck(dirArgs)
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	firstName := os.Args[1]
+	lastName := os.Args[2]
+	dirExists, _ := dirCheck(wd)
 	if dirExists {
-		fmt.Println("it exists!")
-		processFiles(dirArgs)
+		tsvInfos := processFiles(wd)
+		createExport(tsvInfos, wd, firstName, lastName)
 	} else {
-		fmt.Printf("could not find directory %s", dirArgs)
+		fmt.Printf("could not find directory %s", wd)
 	}
 }
