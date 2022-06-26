@@ -7,6 +7,9 @@ import (
 	"strings"
 )
 
+//sweeps through working directory for all folders that has the prefix of "session-" and utlizes TsvCheck() to verify
+//if it contains "curated_processed_speech_only.tsv". if folder satisfies all requirements, its path and its name is placed in tsvInfos
+//and is provided as a return.
 func ProcessFiles(dir string) []TsvInfo {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {

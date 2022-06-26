@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+//Generates the export folder using datetime and firstname/lastname arguments.
+//Recieves tsvInfos to cycle through and copy over files into the newly generated folder.
 func CreateExport(tsvArr []TsvInfo, rootdir string, firstName string, lastName string) {
 	now := time.Now()
 	exportName := fmt.Sprintf("%s_%s_tsv_%d%d%d", firstName, lastName, now.Month(), now.Day(), now.Year())

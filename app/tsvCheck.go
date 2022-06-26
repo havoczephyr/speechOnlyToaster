@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 )
 
+//filters if the selected "session-" contains "curated_processed_speech_only.tsv
 func TsvCheck(dir string) (string, error) {
 	const tsvName string = "curated_processed_speech_only.tsv"
 

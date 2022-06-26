@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// reads, creates and writes curated_speech_only.tsv's
+// Reads, creates and writes curated_speech_only.tsv's, requires 2 string arguments, can return errors.
 // from the current batch and drops them into the generated folder.
 // along with its new name.
 func Copy(src, dst string) error {
