@@ -1,3 +1,3 @@
-module havoczephyr/speechOnlyToaster
+module speechOnlyToaster
 
 go 1.18
